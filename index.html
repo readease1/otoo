@@ -1,8 +1,12 @@
-<!DOCTYPE html>
+.btn-secondary {
+                width: 100%;
+                max-width: 200px;
+            }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6841dea368412123be1b85e5_otto.png">
     <title>Otto - Just Another Day at the Office</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
@@ -112,8 +116,42 @@
             display: flex;
             gap: 20px;
             justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .secondary-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
             margin-bottom: 40px;
             flex-wrap: wrap;
+        }
+        
+        .btn-secondary {
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-family: 'Comic Neue', cursive;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #333;
+            background: #ffa726;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #ff9800;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 0 #333;
+        }
+        
+        .btn-secondary:active {
+            transform: translateY(3px);
+            box-shadow: 0 0 0 #333;
         }
         
         .btn {
@@ -197,6 +235,93 @@
             background: #26de81 !important;
         }
         
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+        
+        .modal-content {
+            background-color: #f4c604;
+            margin: 5% auto;
+            padding: 30px;
+            border: 4px solid #333;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            font-family: 'Comic Neue', cursive;
+        }
+        
+        .close {
+            color: #333;
+            float: right;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            opacity: 0.7;
+        }
+        
+        .modal h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        .file-upload {
+            background: white;
+            border: 3px dashed #333;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload:hover {
+            background: #f0f0f0;
+            border-color: #ffa726;
+        }
+        
+        .file-upload input {
+            display: none;
+        }
+        
+        .ottofy-preview {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .ottofy-preview canvas {
+            border: 3px solid #333;
+            border-radius: 10px;
+            max-width: 100%;
+        }
+        
+        .game-modal .modal-content {
+            width: 95%;
+            max-width: 1000px;
+            height: 80vh;
+            padding: 20px;
+        }
+        
+        .game-iframe {
+            width: 100%;
+            height: calc(100% - 60px);
+            border: 3px solid #333;
+            border-radius: 10px;
+        }
+        
         .footer {
             font-size: 14px;
             color: #333;
@@ -259,7 +384,6 @@
         <div class="otto-container">
             <div class="otto-illustration">
                 <img src="https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6841dea368412123be1b85e5_otto.png" alt="Otto the Octopus" class="otto-image">
-                <div class="thought-bubble">?</div>
             </div>
         </div>
         
@@ -271,6 +395,11 @@
             <a href="#" class="btn btn-buy">buy $otto</a>
         </div>
         
+        <div class="secondary-buttons">
+            <button class="btn-secondary" onclick="openOttofyModal()">OTTOFY</button>
+            <button class="btn-secondary" onclick="openGameModal()">PLAY</button>
+        </div>
+        
         <div class="bottom-text">
             CA: <span id="contract-address">TBA</span>
             <button id="copy-btn" class="copy-button" onclick="copyToClipboard()">📋</button>
@@ -280,5 +409,133 @@
     <div class="footer">
         otto © 2025 | <a href="mailto:team@otto.link">team@otto.link</a>
     </div>
+    
+    <!-- Ottofy Modal -->
+    <div id="ottofyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeOttofyModal()">&times;</span>
+            <h2>OTTOFY Your Profile Picture!</h2>
+            <p>Upload your profile picture and Otto will make it more... Otto-like! 🐙</p>
+            
+            <div class="file-upload" onclick="document.getElementById('imageInput').click()">
+                <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
+                <p><strong>Click here to upload your image</strong></p>
+                <p>Supports JPG, PNG, GIF</p>
+            </div>
+            
+            <div class="ottofy-preview" id="ottofyPreview" style="display: none;">
+                <canvas id="ottofyCanvas" width="400" height="400"></canvas>
+                <br><br>
+                <button class="btn-secondary" onclick="downloadOttofiedImage()">Download Ottofied PFP!</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game Modal -->
+    <div id="gameModal" class="modal game-modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeGameModal()">&times;</span>
+            <h2>Otto's Octopus Run! 🎮</h2>
+            <iframe id="gameFrame" class="game-iframe" src="about:blank"></iframe>
+        </div>
+    </div>
+    
+    <script>
+        function copyToClipboard() {
+            const contractAddress = document.getElementById('contract-address').textContent;
+            const copyBtn = document.getElementById('copy-btn');
+            
+            navigator.clipboard.writeText(contractAddress).then(function() {
+                copyBtn.classList.add('copy-success');
+                copyBtn.textContent = '✓';
+                
+                setTimeout(() => {
+                    copyBtn.classList.remove('copy-success');
+                    copyBtn.textContent = '📋';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+        
+        function openOttofyModal() {
+            document.getElementById('ottofyModal').style.display = 'block';
+        }
+        
+        function closeOttofyModal() {
+            document.getElementById('ottofyModal').style.display = 'none';
+            document.getElementById('ottofyPreview').style.display = 'none';
+        }
+        
+        function openGameModal() {
+            document.getElementById('gameModal').style.display = 'block';
+            document.getElementById('gameFrame').src = 'https://www.crazygames.com/game/octopusrun';
+        }
+        
+        function closeGameModal() {
+            document.getElementById('gameModal').style.display = 'none';
+            document.getElementById('gameFrame').src = 'about:blank';
+        }
+        
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                ottofyImage(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function ottofyImage(imageSrc) {
+            const canvas = document.getElementById('ottofyCanvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            img.onload = function() {
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw uploaded image
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Add Otto overlay effect (simple example - add Otto as overlay)
+                const ottoImg = new Image();
+                ottoImg.onload = function() {
+                    // Add Otto as a semi-transparent overlay in corner
+                    ctx.globalAlpha = 0.7;
+                    ctx.drawImage(ottoImg, canvas.width - 120, canvas.height - 120, 100, 100);
+                    ctx.globalAlpha = 1.0;
+                    
+                    // Show preview
+                    document.getElementById('ottofyPreview').style.display = 'block';
+                };
+                ottoImg.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6841dea368412123be1b85e5_otto.png';
+            };
+            
+            img.src = imageSrc;
+        }
+        
+        function downloadOttofiedImage() {
+            const canvas = document.getElementById('ottofyCanvas');
+            const link = document.createElement('a');
+            link.download = 'ottofied-pfp.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const ottofyModal = document.getElementById('ottofyModal');
+            const gameModal = document.getElementById('gameModal');
+            if (event.target == ottofyModal) {
+                closeOttofyModal();
+            }
+            if (event.target == gameModal) {
+                closeGameModal();
+            }
+        }
+    </script>
 </body>
 </html>
