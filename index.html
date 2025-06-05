@@ -66,8 +66,8 @@
         }
         
         .otto-illustration {
-            width: 300px;
-            height: 300px;
+            width: 400px;
+            height: 400px;
             margin: 0 auto 20px;
             position: relative;
         }
@@ -162,10 +162,39 @@
             border-radius: 10px;
             padding: 15px;
             font-family: 'Courier New', monospace;
-            font-size: 14px;
+            font-size: 16px;
             color: #333;
             margin-bottom: 20px;
-            word-break: break-all;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .copy-button {
+            background: #4ecdc4;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 0 #333;
+        }
+        
+        .copy-button:hover {
+            background: #45b7b8;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 0 #333;
+        }
+        
+        .copy-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 0 0 #333;
+        }
+        
+        .copy-success {
+            background: #26de81 !important;
         }
         
         .footer {
@@ -200,8 +229,8 @@
             }
             
             .otto-illustration {
-                width: 250px;
-                height: 250px;
+                width: 300px;
+                height: 300px;
             }
             
             h1 {
@@ -238,12 +267,13 @@
         <p class="subtitle">"Am I even qualified for this job?"</p>
         
         <div class="action-buttons">
-            <a href="#" class="btn btn-community">🐙 Join Community</a>
+            <a href="#" class="btn btn-community">Join Community</a>
             <a href="#" class="btn btn-buy">buy $otto</a>
         </div>
         
         <div class="bottom-text">
-            OttoImposterSyndromeVibesWorkAnxietyRelatableContentOfficeStruggles
+            CA: <span id="contract-address">TBA</span>
+            <button id="copy-btn" class="copy-button" onclick="copyToClipboard()">📋</button>
         </div>
     </div>
     
