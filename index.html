@@ -1,7 +1,4 @@
-.btn-secondary {
-                width: 100%;
-                max-width: 200px;
-            }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -28,6 +25,11 @@
             padding: 20px;
             position: relative;
         }
+
+      .btn-secondary {
+                width: 100%;
+                max-width: 200px;
+            }
         
         .nav-buttons {
             position: absolute;
@@ -50,6 +52,8 @@
             text-decoration: none;
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border: none;
         }
         
         .nav-btn:hover {
@@ -121,37 +125,33 @@
         }
         
         .secondary-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
+            display: none;
         }
         
         .btn-secondary {
-            padding: 12px 25px;
+            padding: 8px 16px;
             border-radius: 25px;
             font-family: 'Comic Neue', cursive;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             text-decoration: none;
             border: 2px solid #333;
             transition: all 0.3s ease;
             cursor: pointer;
-            box-shadow: 0 3px 0 #333;
-            background: #ffa726;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.9);
             color: #333;
         }
         
         .btn-secondary:hover {
-            background: #ff9800;
+            background: white;
             transform: translateY(-2px);
-            box-shadow: 0 5px 0 #333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         
         .btn-secondary:active {
-            transform: translateY(3px);
-            box-shadow: 0 0 0 #333;
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .btn {
@@ -380,6 +380,11 @@
     </style>
 </head>
 <body>
+    <div class="nav-buttons">
+        <button class="nav-btn btn-secondary" onclick="openOttofyModal()">OTTOFY</button>
+        <button class="nav-btn btn-secondary" onclick="openGameModal()">PLAY</button>
+    </div>
+    
     <div class="main-content">
         <div class="otto-container">
             <div class="otto-illustration">
@@ -393,11 +398,6 @@
         <div class="action-buttons">
             <a href="#" class="btn btn-community">Join Community</a>
             <a href="#" class="btn btn-buy">buy $otto</a>
-        </div>
-        
-        <div class="secondary-buttons">
-            <button class="btn-secondary" onclick="openOttofyModal()">OTTOFY</button>
-            <button class="btn-secondary" onclick="openGameModal()">PLAY</button>
         </div>
         
         <div class="bottom-text">
@@ -469,7 +469,8 @@
         
         function openGameModal() {
             document.getElementById('gameModal').style.display = 'block';
-            document.getElementById('gameFrame').src = 'https://www.crazygames.com/game/octopusrun';
+            // Use a different octopus game that allows embedding
+            document.getElementById('gameFrame').src = 'https://games.crazygames.com/en_US/octopus-run/index.html';
         }
         
         function closeGameModal() {
