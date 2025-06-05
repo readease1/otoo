@@ -1,14 +1,4 @@
-<!-- Game Modal -->
-    <div id="gameModal" class="modal game-modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeGameModal()">&times;</span>
-            <h2>Otto's Electric Shocktopus! ⚡🐙</h2>
-            <iframe id="gameFrame" class="game-iframe" src="about:blank"></iframe>
-        </div>
-    </div>            .btn-secondary {
-                width: 100%;
-                max-width: 200px;
-            }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -58,7 +48,6 @@
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             cursor: pointer;
-            border: none;
         }
         
         .nav-btn:hover {
@@ -92,19 +81,6 @@
             animation: float 3s ease-in-out infinite;
         }
         
-        .thought-bubble {
-            position: absolute;
-            top: -60px;
-            right: -80px;
-            background: white;
-            border: 3px solid #333;
-            border-radius: 20px;
-            padding: 10px 15px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #666;
-        }
-        
         h1 {
             font-size: 72px;
             font-weight: 700;
@@ -125,38 +101,8 @@
             display: flex;
             gap: 20px;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             flex-wrap: wrap;
-        }
-        
-        .secondary-buttons {
-            display: none;
-        }
-        
-        .btn-secondary {
-            padding: 8px 16px;
-            border-radius: 25px;
-            font-family: 'Comic Neue', cursive;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            border: 2px solid #333;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-        }
-        
-        .btn-secondary:hover {
-            background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        
-        .btn-secondary:active {
-            transform: translateY(1px);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .btn {
@@ -238,6 +184,17 @@
         
         .copy-success {
             background: #26de81 !important;
+        }
+        
+        .footer {
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .footer a {
+            color: #333;
+            text-decoration: none;
         }
         
         .modal {
@@ -327,26 +284,9 @@
             border-radius: 10px;
         }
         
-        .footer {
-            font-size: 14px;
-            color: #333;
-            text-align: center;
-        }
-        
-        .footer a {
-            color: #333;
-            text-decoration: none;
-        }
-        
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
-        }
-        
-        @keyframes wiggle {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-5deg); }
-            75% { transform: rotate(5deg); }
         }
         
         @media (max-width: 768px) {
@@ -367,11 +307,6 @@
                 font-size: 48px;
             }
             
-            .thought-bubble {
-                right: -40px;
-                font-size: 18px;
-            }
-            
             .action-buttons {
                 flex-direction: column;
                 align-items: center;
@@ -386,8 +321,8 @@
 </head>
 <body>
     <div class="nav-buttons">
-        <button class="nav-btn btn-secondary" onclick="openOttofyModal()">OTTOFY</button>
-        <button class="nav-btn btn-secondary" onclick="openGameModal()">PLAY</button>
+        <button class="nav-btn" onclick="openOttofyModal()">OTTOFY</button>
+        <button class="nav-btn" onclick="openGameModal()">PLAY</button>
     </div>
     
     <div class="main-content">
@@ -431,8 +366,17 @@
             <div class="ottofy-preview" id="ottofyPreview" style="display: none;">
                 <canvas id="ottofyCanvas" width="400" height="400"></canvas>
                 <br><br>
-                <button class="btn-secondary" onclick="downloadOttofiedImage()">Download Ottofied PFP!</button>
+                <button class="nav-btn" onclick="downloadOttofiedImage()">Download Ottofied PFP!</button>
             </div>
+        </div>
+    </div>
+    
+    <!-- Game Modal -->
+    <div id="gameModal" class="modal game-modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeGameModal()">&times;</span>
+            <h2>Otto's Electric Shocktopus! ⚡🐙</h2>
+            <iframe id="gameFrame" class="game-iframe" src="about:blank"></iframe>
         </div>
     </div>
     
@@ -461,11 +405,6 @@
         function closeOttofyModal() {
             document.getElementById('ottofyModal').style.display = 'none';
             document.getElementById('ottofyPreview').style.display = 'none';
-        }
-        
-        function openGame() {
-            // Open the game in a new tab since iframe embedding is blocked
-            window.open('https://www.crazygames.com/game/octopusrun', '_blank');
         }
         
         function openGameModal() {
@@ -501,7 +440,7 @@
                 // Draw uploaded image
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 
-                // Add Otto overlay effect (simple example - add Otto as overlay)
+                // Add Otto overlay effect
                 const ottoImg = new Image();
                 ottoImg.onload = function() {
                     // Add Otto as a semi-transparent overlay in corner
