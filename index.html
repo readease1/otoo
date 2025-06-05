@@ -1,4 +1,14 @@
-<!DOCTYPE html>
+<!-- Game Modal -->
+    <div id="gameModal" class="modal game-modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeGameModal()">&times;</span>
+            <h2>Otto's Electric Shocktopus! ⚡🐙</h2>
+            <iframe id="gameFrame" class="game-iframe" src="about:blank"></iframe>
+        </div>
+    </div>            .btn-secondary {
+                width: 100%;
+                max-width: 200px;
+            }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -25,11 +35,6 @@
             padding: 20px;
             position: relative;
         }
-
-      .btn-secondary {
-                width: 100%;
-                max-width: 200px;
-            }
         
         .nav-buttons {
             position: absolute;
@@ -431,15 +436,6 @@
         </div>
     </div>
     
-    <!-- Game Modal -->
-    <div id="gameModal" class="modal game-modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeGameModal()">&times;</span>
-            <h2>Otto's Octopus Run! 🎮</h2>
-            <iframe id="gameFrame" class="game-iframe" src="about:blank"></iframe>
-        </div>
-    </div>
-    
     <script>
         function copyToClipboard() {
             const contractAddress = document.getElementById('contract-address').textContent;
@@ -467,10 +463,14 @@
             document.getElementById('ottofyPreview').style.display = 'none';
         }
         
+        function openGame() {
+            // Open the game in a new tab since iframe embedding is blocked
+            window.open('https://www.crazygames.com/game/octopusrun', '_blank');
+        }
+        
         function openGameModal() {
             document.getElementById('gameModal').style.display = 'block';
-            // Use a different octopus game that allows embedding
-            document.getElementById('gameFrame').src = 'https://games.crazygames.com/en_US/octopus-run/index.html';
+            document.getElementById('gameFrame').src = 'https://gamaverse.com/the-electric-shocktopus-game/';
         }
         
         function closeGameModal() {
