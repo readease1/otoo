@@ -482,34 +482,146 @@
         
         .lore-modal .modal-content {
             width: 90%;
-            max-width: 700px;
-            height: 80vh;
-            padding: 25px;
-            overflow-y: auto;
+            max-width: 800px;
+            height: 85vh;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f4c604 0%, #ffed4e 50%, #f4c604 100%);
+            border: 4px solid #333;
+            border-radius: 25px;
+        }
+        
+        .lore-header {
+            background: linear-gradient(135deg, #333 0%, #444 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 21px 21px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .lore-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shine 3s infinite;
+        }
+        
+        .lore-header h2 {
+            font-size: 32px;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         
         .lore-content {
-            line-height: 1.6;
+            padding: 30px;
+            height: calc(100% - 100px);
+            overflow-y: auto;
+            line-height: 1.7;
             text-align: left;
+            background: rgba(255, 255, 255, 0.9);
+            margin: 0 20px 20px 20px;
+            border-radius: 15px;
+            border: 2px solid #333;
         }
         
-        .lore-content h3 {
+        .lore-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .lore-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .lore-content::-webkit-scrollbar-thumb {
+            background: #4ecdc4;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+        
+        .chapter {
+            background: white;
+            border: 3px solid #333;
+            border-radius: 15px;
+            margin: 20px 0;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .chapter:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .chapter h3 {
             color: #333;
-            margin: 20px 0 10px 0;
-            font-size: 24px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 5px;
+            margin: 0 0 15px 0;
+            font-size: 22px;
+            border-bottom: 3px solid #4ecdc4;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        .lore-content p {
-            margin-bottom: 15px;
+        .chapter-number {
+            background: #4ecdc4;
+            color: #333;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid #333;
+            flex-shrink: 0;
+        }
+        
+        .chapter p {
+            margin: 15px 0;
             color: #444;
             font-size: 16px;
         }
         
-        .lore-content em {
+        .chapter em {
             color: #666;
             font-style: italic;
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border-left: 3px solid #4ecdc4;
+        }
+        
+        .shock-effect {
+            color: #ff6b6b;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .final-message {
+            background: linear-gradient(135deg, #26de81, #4ecdc4);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid #333;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
         
         .lightbox img {
@@ -691,31 +803,49 @@
         </div>
     </div>
 
+    <!-- Lore Modal -->
     <div id="loreModal" class="modal lore-modal">
         <div class="modal-content">
             <span class="close" onclick="closeLoreModal()">&times;</span>
-            <div class="lore-content">
+            
+            <div class="lore-header">
                 <h2>The Shocking Truth About Otto 🐙⚡</h2>
+            </div>
+            
+            <div class="lore-content">
+                <div class="chapter">
+                    <h3><span class="chapter-number">1</span>Deep Sea Dreams</h3>
+                    <p>Otto always dreamed of making it big in the corporate world. Growing up in the Mariana Trench, he watched the surface world through old sunken magazines and thought, <em>"I could totally do that office job thing!"</em> What he didn't realize was that his natural octopus abilities would become his biggest workplace nightmares.</p>
+                </div>
                 
-                <h3>Chapter 1: Deep Sea Dreams</h3>
-                <p>Otto always dreamed of making it big in the corporate world. Growing up in the Mariana Trench, he watched the surface world through old sunken magazines and thought, <em>"I could totally do that office job thing!"</em> What he didn't realize was that his natural octopus abilities would become his biggest workplace nightmares.</p>
+                <div class="chapter">
+                    <h3><span class="chapter-number">2</span>The Marketing Mishap</h3>
+                    <p>His first job was at SeaScale Marketing. On day one, Otto was so nervous during the presentation that he accidentally released an electric shock, frying the entire conference room's electronics. The projector exploded, laptops died, and the CEO's coffee maker started smoking. Otto spent the rest of the day hiding in the supply closet, convinced everyone knew he was a fraud.</p>
+                </div>
                 
-                <h3>Chapter 2: The Marketing Mishap</h3>
-                <p>His first job was at SeaScale Marketing. On day one, Otto was so nervous during the presentation that he accidentally released an electric shock, frying the entire conference room's electronics. The projector exploded, laptops died, and the CEO's coffee maker started smoking. Otto spent the rest of the day hiding in the supply closet, convinced everyone knew he was a fraud.</p>
+                <div class="chapter">
+                    <h3><span class="chapter-number">3</span>Customer Service Catastrophe</h3>
+                    <p>Next, Otto tried customer service at AquaTech Solutions. Every time a difficult customer called, his stress levels would spike and... <span class="shock-effect">ZAP!</span> The phone lines would go dead. His supervisor kept asking why Otto's desk area had such "electrical issues." Otto would just nervously laugh and say <em>"Must be the building's wiring!"</em> while secretly googling "how to control octopus electricity when anxious."</p>
+                </div>
                 
-                <h3>Chapter 3: Customer Service Catastrophe</h3>
-                <p>Next, Otto tried customer service at AquaTech Solutions. Every time a difficult customer called, his stress levels would spike and... <em>ZAP!</em> The phone lines would go dead. His supervisor kept asking why Otto's desk area had such "electrical issues." Otto would just nervously laugh and say <em>"Must be the building's wiring!"</em> while secretly googling "how to control octopus electricity when anxious."</p>
+                <div class="chapter">
+                    <h3><span class="chapter-number">4</span>The Coffee Shop Incident</h3>
+                    <p>Desperate for work, Otto took a job at Tentacle Café. The pressure of the morning rush, combined with his impostor syndrome, led to the infamous "Latte Lightning Incident." When a customer complained about their order, Otto's defensive shock traveled through the espresso machine, causing every coffee order for the next hour to taste like... well, electricity. He was let go that same day.</p>
+                </div>
                 
-                <h3>Chapter 4: The Coffee Shop Incident</h3>
-                <p>Desperate for work, Otto took a job at Tentacle Café. The pressure of the morning rush, combined with his impostor syndrome, led to the infamous "Latte Lightning Incident." When a customer complained about their order, Otto's defensive shock traveled through the espresso machine, causing every coffee order for the next hour to taste like... well, electricity. He was let go that same day.</p>
+                <div class="chapter">
+                    <h3><span class="chapter-number">5</span>Rock Bottom (of the Ocean)</h3>
+                    <p>After being fired from seventeen different jobs, Otto started working from his underwater cave. He convinced himself that maybe remote work would hide his "shocking" personality. But even on video calls, his camera would mysteriously glitch whenever he got stressed. Coworkers started calling him <em>"Otto the Glitch"</em> behind his back.</p>
+                </div>
                 
-                <h3>Chapter 5: Rock Bottom (of the Ocean)</h3>
-                <p>After being fired from seventeen different jobs, Otto started working from his underwater cave. He convinced himself that maybe remote work would hide his "shocking" personality. But even on video calls, his camera would mysteriously glitch whenever he got stressed. Coworkers started calling him "Otto the Glitch" behind his back.</p>
+                <div class="chapter">
+                    <h3><span class="chapter-number">6</span>Finding His Current</h3>
+                    <p>One day, Otto realized something: maybe his shocking nature wasn't a bug, it was a feature. Maybe he didn't need to hide who he was. Maybe the right workplace would appreciate an octopus who literally brought electricity to the job. And maybe, just maybe, impostor syndrome was just his brain's way of protecting him from jobs that weren't worthy of his unique talents.</p>
+                </div>
                 
-                <h3>Chapter 6: Finding His Current</h3>
-                <p>One day, Otto realized something: maybe his shocking nature wasn't a bug, it was a feature. Maybe he didn't need to hide who he was. Maybe the right workplace would appreciate an octopus who literally brought electricity to the job. And maybe, just maybe, impostor syndrome was just his brain's way of protecting him from jobs that weren't worthy of his unique talents.</p>
-                
-                <p><em>Otto's still figuring it out, one shocking day at a time. ⚡</em></p>
+                <div class="final-message">
+                    Otto's still figuring it out, one shocking day at a time. ⚡
+                </div>
             </div>
         </div>
     </div>
