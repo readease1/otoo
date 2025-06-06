@@ -2,7 +2,6 @@
     <div id="galleryModal" class="modal gallery-modal">
         <div class="modal-content">
             <span class="close" onclick="closeGalleryModal()">&times;</span>
-            <h2>Otto's Gallery 🎨</h2>
             <p>Otto's various moods and moments captured in art!</p>
             
             <div class="gallery-grid" id="galleryGrid">
@@ -563,6 +562,18 @@
                 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6841ef9fe9ad525551012266_ChatGPT%20Image%20Jun%205%2C%202025%2C%2007_34_32%20PM.png'
             ];
             
+            const randomNames = [
+                'otto-monday-blues',
+                'tentacle-chaos',
+                'imposter-vibes',
+                'otto-overthinking',
+                'workplace-anxiety',
+                'deep-sea-doubts',
+                'otto-stressed',
+                'electric-feels',
+                'octopus-overload'
+            ];
+            
             const galleryGrid = document.getElementById('galleryGrid');
             galleryGrid.innerHTML = '';
             
@@ -572,8 +583,8 @@
                 galleryItem.innerHTML = `
                     <img src="${imageUrl}" alt="Otto Gallery Image ${index + 1}" loading="lazy">
                     <div class="gallery-item-overlay">
-                        <p>Otto Art #${index + 1}</p>
-                        <button class="save-btn" onclick="saveImage('${imageUrl}', 'otto-art-${index + 1}')">Save Image</button>
+                        <p>${randomNames[index]}</p>
+                        <button class="save-btn" onclick="saveImage('${imageUrl}', '${randomNames[index]}')">Save Image</button>
                     </div>
                 `;
                 
@@ -588,13 +599,29 @@
         }
         
         function saveImage(imageUrl, filename) {
-            const link = document.createElement('a');
-            link.href = imageUrl;
-            link.download = filename + '.png';
-            link.target = '_blank';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            fetch(imageUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = filename + '.png';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(err => {
+                    console.error('Error downloading image:', err);
+                    // Fallback to original method if fetch fails
+                    const link = document.createElement('a');
+                    link.href = imageUrl;
+                    link.download = filename + '.png';
+                    link.target = '_blank';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
         }
         
         function openLightbox(imageUrl) {
@@ -660,11 +687,15 @@
         window.onclick = function(event) {
             const ottofyModal = document.getElementById('ottofyModal');
             const gameModal = document.getElementById('gameModal');
+            const galleryModal = document.getElementById('galleryModal');
             if (event.target == ottofyModal) {
                 closeOttofyModal();
             }
             if (event.target == gameModal) {
                 closeGameModal();
+            }
+            if (event.target == galleryModal) {
+                closeGalleryModal();
             }
         }
     </script>
