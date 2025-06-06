@@ -1,21 +1,4 @@
-<!-- Gallery Modal -->
-    <div id="galleryModal" class="modal gallery-modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeGalleryModal()">&times;</span>
-            <p>Otto's various moods and moments captured in art!</p>
-            
-            <div class="gallery-grid" id="galleryGrid">
-                <!-- Gallery items will be populated by JavaScript -->
-            </div>
-        </div>
-    </div>
-    
-    <!-- Lightbox for full-size images -->
-    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-        <div class="lightbox-content">
-            <img id="lightboxImage" src="" alt="Otto Gallery Image">
-        </div>
-    </div><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -299,6 +282,38 @@
             justify-content: center;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .overlay-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+        
+        .overlay-option {
+            background: white;
+            border: 3px solid #333;
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Comic Neue', cursive;
+            font-weight: 600;
+        }
+        
+        .overlay-option.active {
+            background: #4ecdc4;
+            transform: translateY(-2px);
+        }
+        
+        .overlay-option:hover {
+            background: #f0f0f0;
+        }
+        
+        .overlay-option.active:hover {
+            background: #45b7b8;
         }
         
         .size-control {
@@ -531,15 +546,20 @@
                 <p>Supports JPG, PNG, GIF</p>
             </div>
             
+            <div class="overlay-selector">
+                <button class="overlay-option active" onclick="selectOverlay('otto')">🐙 Otto</button>
+                <button class="overlay-option" onclick="selectOverlay('ink')">🖤 Ink Splatter</button>
+            </div>
+            
             <div class="ottofy-preview" id="ottofyPreview" style="display: none;">
                 <canvas id="ottofyCanvas" width="400" height="400"></canvas>
                 <div class="ottofy-controls">
-                    <button class="size-control" onclick="changeOttoSize(-0.1)">-</button>
+                    <button class="size-control" onclick="changeOverlaySize(-0.1)">-</button>
                     <span class="size-display" id="sizeDisplay">100%</span>
-                    <button class="size-control" onclick="changeOttoSize(0.1)">+</button>
+                    <button class="size-control" onclick="changeOverlaySize(0.1)">+</button>
                 </div>
-                <p style="font-size: 14px; color: #666; margin: 10px 0;">Drag Otto to move him around!</p>
-                <button class="nav-btn" onclick="downloadOttofiedImage()">Download Ottofied PFP!</button>
+                <p style="font-size: 14px; color: #666; margin: 10px 0;">Drag the overlay to move it around!</p>
+                <button class="nav-btn" onclick="downloadOttofiedImage()">Download Styled PFP!</button>
             </div>
         </div>
     </div>
@@ -717,34 +737,75 @@
         function ottofyImage(imageSrc) {
             const canvas = document.getElementById('ottofyCanvas');
             const ctx = canvas.getContext('2d');
-            const img = new Image();
             
-            // Otto overlay state
-            window.ottoState = {
+            // Initialize overlay state
+            window.overlayState = {
                 x: canvas.width - 120,
                 y: canvas.height - 120,
                 size: 1.0,
                 isDragging: false,
-                dragOffset: { x: 0, y: 0 }
+                dragOffset: { x: 0, y: 0 },
+                currentOverlay: 'otto'
             };
+            
+            // Create new image with CORS handling
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
             
             img.onload = function() {
                 // Store the user image for redrawing
                 window.userImage = img;
-                
-                // Load Otto overlay
-                const ottoImg = new Image();
-                ottoImg.onload = function() {
-                    window.ottoOverlay = ottoImg;
-                    redrawCanvas();
-                    setupCanvasInteraction();
-                    document.getElementById('ottofyPreview').style.display = 'block';
-                    updateSizeDisplay();
+                loadOverlayImages();
+            };
+            
+            img.onerror = function() {
+                // Fallback: load image without CORS
+                const fallbackImg = new Image();
+                fallbackImg.onload = function() {
+                    window.userImage = fallbackImg;
+                    loadOverlayImages();
                 };
-                ottoImg.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/684240e0267bdf8ae22002bf_ChatGPT%20Image%20Jun%206%2C%202025%2C%2002_14_03%20AM.png';
+                fallbackImg.src = imageSrc;
             };
             
             img.src = imageSrc;
+        }
+        
+        function loadOverlayImages() {
+            // Load Otto overlay
+            const ottoImg = new Image();
+            ottoImg.crossOrigin = 'anonymous';
+            ottoImg.onload = function() {
+                window.ottoOverlay = ottoImg;
+                loadInkOverlay();
+            };
+            ottoImg.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/684240e0267bdf8ae22002bf_ChatGPT%20Image%20Jun%206%2C%202025%2C%2002_14_03%20AM.png';
+        }
+        
+        function loadInkOverlay() {
+            // Load ink overlay
+            const inkImg = new Image();
+            inkImg.crossOrigin = 'anonymous';
+            inkImg.onload = function() {
+                window.inkOverlay = inkImg;
+                redrawCanvas();
+                setupCanvasInteraction();
+                document.getElementById('ottofyPreview').style.display = 'block';
+                updateSizeDisplay();
+            };
+            inkImg.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6842436723c8b2dc8b1ff03a_ink%20(2).png';
+        }
+        
+        function selectOverlay(type) {
+            window.overlayState.currentOverlay = type;
+            
+            // Update button states
+            document.querySelectorAll('.overlay-option').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            redrawCanvas();
         }
         
         function redrawCanvas() {
@@ -757,10 +818,16 @@
             // Draw user image
             ctx.drawImage(window.userImage, 0, 0, canvas.width, canvas.height);
             
-            // Draw Otto overlay
-            const ottoSize = 100 * window.ottoState.size;
+            // Draw current overlay
+            const overlaySize = 100 * window.overlayState.size;
             ctx.globalAlpha = 0.9;
-            ctx.drawImage(window.ottoOverlay, window.ottoState.x, window.ottoState.y, ottoSize, ottoSize);
+            
+            if (window.overlayState.currentOverlay === 'otto' && window.ottoOverlay) {
+                ctx.drawImage(window.ottoOverlay, window.overlayState.x, window.overlayState.y, overlaySize, overlaySize);
+            } else if (window.overlayState.currentOverlay === 'ink' && window.inkOverlay) {
+                ctx.drawImage(window.inkOverlay, window.overlayState.x, window.overlayState.y, overlaySize, overlaySize);
+            }
+            
             ctx.globalAlpha = 1.0;
         }
         
@@ -772,41 +839,41 @@
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 
-                // Check if click is on Otto
-                const ottoSize = 100 * window.ottoState.size;
-                if (x >= window.ottoState.x && x <= window.ottoState.x + ottoSize &&
-                    y >= window.ottoState.y && y <= window.ottoState.y + ottoSize) {
-                    window.ottoState.isDragging = true;
-                    window.ottoState.dragOffset.x = x - window.ottoState.x;
-                    window.ottoState.dragOffset.y = y - window.ottoState.y;
+                // Check if click is on overlay
+                const overlaySize = 100 * window.overlayState.size;
+                if (x >= window.overlayState.x && x <= window.overlayState.x + overlaySize &&
+                    y >= window.overlayState.y && y <= window.overlayState.y + overlaySize) {
+                    window.overlayState.isDragging = true;
+                    window.overlayState.dragOffset.x = x - window.overlayState.x;
+                    window.overlayState.dragOffset.y = y - window.overlayState.y;
                     canvas.style.cursor = 'grabbing';
                 }
             });
             
             canvas.addEventListener('mousemove', function(e) {
-                if (window.ottoState.isDragging) {
+                if (window.overlayState.isDragging) {
                     const rect = canvas.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
                     
-                    window.ottoState.x = x - window.ottoState.dragOffset.x;
-                    window.ottoState.y = y - window.ottoState.dragOffset.y;
+                    window.overlayState.x = x - window.overlayState.dragOffset.x;
+                    window.overlayState.y = y - window.overlayState.dragOffset.y;
                     
-                    // Keep Otto within canvas bounds
-                    const ottoSize = 100 * window.ottoState.size;
-                    window.ottoState.x = Math.max(0, Math.min(canvas.width - ottoSize, window.ottoState.x));
-                    window.ottoState.y = Math.max(0, Math.min(canvas.height - ottoSize, window.ottoState.y));
+                    // Keep overlay within canvas bounds
+                    const overlaySize = 100 * window.overlayState.size;
+                    window.overlayState.x = Math.max(0, Math.min(canvas.width - overlaySize, window.overlayState.x));
+                    window.overlayState.y = Math.max(0, Math.min(canvas.height - overlaySize, window.overlayState.y));
                     
                     redrawCanvas();
                 } else {
-                    // Check if hovering over Otto
+                    // Check if hovering over overlay
                     const rect = canvas.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
-                    const ottoSize = 100 * window.ottoState.size;
+                    const overlaySize = 100 * window.overlayState.size;
                     
-                    if (x >= window.ottoState.x && x <= window.ottoState.x + ottoSize &&
-                        y >= window.ottoState.y && y <= window.ottoState.y + ottoSize) {
+                    if (x >= window.overlayState.x && x <= window.overlayState.x + overlaySize &&
+                        y >= window.overlayState.y && y <= window.overlayState.y + overlaySize) {
                         canvas.style.cursor = 'grab';
                     } else {
                         canvas.style.cursor = 'default';
@@ -815,40 +882,73 @@
             });
             
             canvas.addEventListener('mouseup', function() {
-                window.ottoState.isDragging = false;
+                window.overlayState.isDragging = false;
                 canvas.style.cursor = 'default';
             });
             
             canvas.addEventListener('mouseleave', function() {
-                window.ottoState.isDragging = false;
+                window.overlayState.isDragging = false;
                 canvas.style.cursor = 'default';
             });
         }
         
-        function changeOttoSize(delta) {
-            window.ottoState.size = Math.max(0.3, Math.min(2.0, window.ottoState.size + delta));
+        function changeOverlaySize(delta) {
+            window.overlayState.size = Math.max(0.3, Math.min(2.0, window.overlayState.size + delta));
             
-            // Keep Otto within bounds after size change
+            // Keep overlay within bounds after size change
             const canvas = document.getElementById('ottofyCanvas');
-            const ottoSize = 100 * window.ottoState.size;
-            window.ottoState.x = Math.max(0, Math.min(canvas.width - ottoSize, window.ottoState.x));
-            window.ottoState.y = Math.max(0, Math.min(canvas.height - ottoSize, window.ottoState.y));
+            const overlaySize = 100 * window.overlayState.size;
+            window.overlayState.x = Math.max(0, Math.min(canvas.width - overlaySize, window.overlayState.x));
+            window.overlayState.y = Math.max(0, Math.min(canvas.height - overlaySize, window.overlayState.y));
             
             redrawCanvas();
             updateSizeDisplay();
         }
         
         function updateSizeDisplay() {
-            const percentage = Math.round(window.ottoState.size * 100);
+            const percentage = Math.round(window.overlayState.size * 100);
             document.getElementById('sizeDisplay').textContent = percentage + '%';
         }
         
         function downloadOttofiedImage() {
             const canvas = document.getElementById('ottofyCanvas');
-            const link = document.createElement('a');
-            link.download = 'ottofied-pfp.png';
-            link.href = canvas.toDataURL();
-            link.click();
+            
+            try {
+                // Try direct canvas download first
+                const link = document.createElement('a');
+                link.download = `styled-pfp-${window.overlayState.currentOverlay}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (error) {
+                // Fallback: Use html2canvas-like approach
+                console.log('Direct download failed, using alternative method');
+                
+                // Create a new canvas to avoid tainted canvas issues
+                const newCanvas = document.createElement('canvas');
+                const newCtx = newCanvas.getContext('2d');
+                newCanvas.width = canvas.width;
+                newCanvas.height = canvas.height;
+                
+                // Redraw everything on the new canvas
+                newCtx.drawImage(window.userImage, 0, 0, newCanvas.width, newCanvas.height);
+                
+                const overlaySize = 100 * window.overlayState.size;
+                newCtx.globalAlpha = 0.9;
+                
+                if (window.overlayState.currentOverlay === 'otto' && window.ottoOverlay) {
+                    newCtx.drawImage(window.ottoOverlay, window.overlayState.x, window.overlayState.y, overlaySize, overlaySize);
+                } else if (window.overlayState.currentOverlay === 'ink' && window.inkOverlay) {
+                    newCtx.drawImage(window.inkOverlay, window.overlayState.x, window.overlayState.y, overlaySize, overlaySize);
+                }
+                
+                newCtx.globalAlpha = 1.0;
+                
+                // Download the new canvas
+                const link = document.createElement('a');
+                link.download = `styled-pfp-${window.overlayState.currentOverlay}.png`;
+                link.href = newCanvas.toDataURL('image/png');
+                link.click();
+            }
         }
         
         // Close modals when clicking outside
