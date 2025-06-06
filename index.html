@@ -1,4 +1,21 @@
-<!DOCTYPE html>
+<!-- Gallery Modal -->
+    <div id="galleryModal" class="modal gallery-modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeGalleryModal()">&times;</span>
+            <p>Otto's various moods and moments captured in art!</p>
+            
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Gallery items will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lightbox for full-size images -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <div class="lightbox-content">
+            <img id="lightboxImage" src="" alt="Otto Gallery Image">
+        </div>
+    </div><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -95,6 +112,18 @@
             color: #333;
             margin-bottom: 40px;
             font-style: italic;
+            height: 25px;
+            overflow: hidden;
+        }
+        
+        .typewriter {
+            border-right: 2px solid #333;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { border-color: transparent; }
+            51%, 100% { border-color: #333; }
         }
         
         .action-buttons {
@@ -190,6 +219,11 @@
             font-size: 14px;
             color: #333;
             text-align: center;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
         }
         
         .footer a {
@@ -499,6 +533,50 @@
                 max-width: 300px;
             }
         }
+        
+        // Typewriter effect
+        const phrases = [
+            '"Am I even qualified for this job?"',
+            '"This is shocking... do I belong here?"',
+            '"Maybe I should just stick to the deep sea..."',
+            '"Everyone else seems so much more shocking than me"'
+        ];
+        
+        let currentPhrase = 0;
+        let currentChar = 0;
+        let isDeleting = false;
+        
+        function typeWriter() {
+            const typewriterElement = document.getElementById('typewriter');
+            const current = phrases[currentPhrase];
+            
+            if (isDeleting) {
+                typewriterElement.textContent = current.substring(0, currentChar - 1);
+                currentChar--;
+            } else {
+                typewriterElement.textContent = current.substring(0, currentChar + 1);
+                currentChar++;
+            }
+            
+            let typeSpeed = isDeleting ? 50 : 100;
+            
+            if (!isDeleting && currentChar === current.length) {
+                // Pause at end
+                typeSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && currentChar === 0) {
+                isDeleting = false;
+                currentPhrase = (currentPhrase + 1) % phrases.length;
+                typeSpeed = 500;
+            }
+            
+            setTimeout(typeWriter, typeSpeed);
+        }
+        
+        // Start typewriter effect when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(typeWriter, 1000);
+        });
     </style>
 </head>
 <body>
@@ -516,7 +594,9 @@
         </div>
         
         <h1>otto</h1>
-        <p class="subtitle">"Am I even qualified for this job?"</p>
+        <div class="subtitle">
+            <span id="typewriter" class="typewriter"></span>
+        </div>
         
         <div class="action-buttons">
             <a href="#" class="btn btn-community">Join Community</a>
