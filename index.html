@@ -1,4 +1,21 @@
-<!DOCTYPE html>
+<!-- Gallery Modal -->
+    <div id="galleryModal" class="modal gallery-modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeGalleryModal()">&times;</span>
+            <p>Otto's various moods and moments captured in art!</p>
+            
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Gallery items will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lightbox for full-size images -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <div class="lightbox-content">
+            <img id="lightboxImage" src="" alt="Otto Gallery Image">
+        </div>
+    </div><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -262,12 +279,56 @@
         .ottofy-preview {
             text-align: center;
             margin: 20px 0;
+            position: relative;
         }
         
         .ottofy-preview canvas {
             border: 3px solid #333;
             border-radius: 10px;
             max-width: 100%;
+            cursor: grab;
+        }
+        
+        .ottofy-preview canvas:active {
+            cursor: grabbing;
+        }
+        
+        .ottofy-controls {
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .size-control {
+            background: #4ecdc4;
+            border: 2px solid #333;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .size-control:hover {
+            background: #45b7b8;
+            transform: scale(1.1);
+        }
+        
+        .size-display {
+            background: white;
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 5px 15px;
+            font-family: 'Comic Neue', cursive;
+            font-weight: 600;
+            color: #333;
         }
         
         .game-modal .modal-content {
@@ -435,7 +496,7 @@
     <div class="main-content">
         <div class="otto-container">
             <div class="otto-illustration">
-                <img src="https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6841dea368412123be1b85e5_otto.png" alt="Otto the Octopus" class="otto-image">
+                <img src="https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6842428a8b7d1ec5984a1546_ottot.gif" alt="Otto the Octopus" class="otto-image">
             </div>
         </div>
         
@@ -472,7 +533,12 @@
             
             <div class="ottofy-preview" id="ottofyPreview" style="display: none;">
                 <canvas id="ottofyCanvas" width="400" height="400"></canvas>
-                <br><br>
+                <div class="ottofy-controls">
+                    <button class="size-control" onclick="changeOttoSize(-0.1)">-</button>
+                    <span class="size-display" id="sizeDisplay">100%</span>
+                    <button class="size-control" onclick="changeOttoSize(0.1)">+</button>
+                </div>
+                <p style="font-size: 14px; color: #666; margin: 10px 0;">Drag Otto to move him around!</p>
                 <button class="nav-btn" onclick="downloadOttofiedImage()">Download Ottofied PFP!</button>
             </div>
         </div>
@@ -653,28 +719,128 @@
             const ctx = canvas.getContext('2d');
             const img = new Image();
             
+            // Otto overlay state
+            window.ottoState = {
+                x: canvas.width - 120,
+                y: canvas.height - 120,
+                size: 1.0,
+                isDragging: false,
+                dragOffset: { x: 0, y: 0 }
+            };
+            
             img.onload = function() {
-                // Clear canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // Store the user image for redrawing
+                window.userImage = img;
                 
-                // Draw uploaded image
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                
-                // Add Otto overlay effect
+                // Load Otto overlay
                 const ottoImg = new Image();
                 ottoImg.onload = function() {
-                    // Add Otto as a semi-transparent overlay in corner
-                    ctx.globalAlpha = 0.7;
-                    ctx.drawImage(ottoImg, canvas.width - 120, canvas.height - 120, 100, 100);
-                    ctx.globalAlpha = 1.0;
-                    
-                    // Show preview
+                    window.ottoOverlay = ottoImg;
+                    redrawCanvas();
+                    setupCanvasInteraction();
                     document.getElementById('ottofyPreview').style.display = 'block';
+                    updateSizeDisplay();
                 };
-                ottoImg.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6841dea368412123be1b85e5_otto.png';
+                ottoImg.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/684240e0267bdf8ae22002bf_ChatGPT%20Image%20Jun%206%2C%202025%2C%2002_14_03%20AM.png';
             };
             
             img.src = imageSrc;
+        }
+        
+        function redrawCanvas() {
+            const canvas = document.getElementById('ottofyCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw user image
+            ctx.drawImage(window.userImage, 0, 0, canvas.width, canvas.height);
+            
+            // Draw Otto overlay
+            const ottoSize = 100 * window.ottoState.size;
+            ctx.globalAlpha = 0.9;
+            ctx.drawImage(window.ottoOverlay, window.ottoState.x, window.ottoState.y, ottoSize, ottoSize);
+            ctx.globalAlpha = 1.0;
+        }
+        
+        function setupCanvasInteraction() {
+            const canvas = document.getElementById('ottofyCanvas');
+            
+            canvas.addEventListener('mousedown', function(e) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Check if click is on Otto
+                const ottoSize = 100 * window.ottoState.size;
+                if (x >= window.ottoState.x && x <= window.ottoState.x + ottoSize &&
+                    y >= window.ottoState.y && y <= window.ottoState.y + ottoSize) {
+                    window.ottoState.isDragging = true;
+                    window.ottoState.dragOffset.x = x - window.ottoState.x;
+                    window.ottoState.dragOffset.y = y - window.ottoState.y;
+                    canvas.style.cursor = 'grabbing';
+                }
+            });
+            
+            canvas.addEventListener('mousemove', function(e) {
+                if (window.ottoState.isDragging) {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    window.ottoState.x = x - window.ottoState.dragOffset.x;
+                    window.ottoState.y = y - window.ottoState.dragOffset.y;
+                    
+                    // Keep Otto within canvas bounds
+                    const ottoSize = 100 * window.ottoState.size;
+                    window.ottoState.x = Math.max(0, Math.min(canvas.width - ottoSize, window.ottoState.x));
+                    window.ottoState.y = Math.max(0, Math.min(canvas.height - ottoSize, window.ottoState.y));
+                    
+                    redrawCanvas();
+                } else {
+                    // Check if hovering over Otto
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const ottoSize = 100 * window.ottoState.size;
+                    
+                    if (x >= window.ottoState.x && x <= window.ottoState.x + ottoSize &&
+                        y >= window.ottoState.y && y <= window.ottoState.y + ottoSize) {
+                        canvas.style.cursor = 'grab';
+                    } else {
+                        canvas.style.cursor = 'default';
+                    }
+                }
+            });
+            
+            canvas.addEventListener('mouseup', function() {
+                window.ottoState.isDragging = false;
+                canvas.style.cursor = 'default';
+            });
+            
+            canvas.addEventListener('mouseleave', function() {
+                window.ottoState.isDragging = false;
+                canvas.style.cursor = 'default';
+            });
+        }
+        
+        function changeOttoSize(delta) {
+            window.ottoState.size = Math.max(0.3, Math.min(2.0, window.ottoState.size + delta));
+            
+            // Keep Otto within bounds after size change
+            const canvas = document.getElementById('ottofyCanvas');
+            const ottoSize = 100 * window.ottoState.size;
+            window.ottoState.x = Math.max(0, Math.min(canvas.width - ottoSize, window.ottoState.x));
+            window.ottoState.y = Math.max(0, Math.min(canvas.height - ottoSize, window.ottoState.y));
+            
+            redrawCanvas();
+            updateSizeDisplay();
+        }
+        
+        function updateSizeDisplay() {
+            const percentage = Math.round(window.ottoState.size * 100);
+            document.getElementById('sizeDisplay').textContent = percentage + '%';
         }
         
         function downloadOttofiedImage() {
