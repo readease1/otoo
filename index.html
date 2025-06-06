@@ -271,17 +271,27 @@
         }
         
         .game-modal .modal-content {
-            width: 95%;
-            max-width: 1000px;
-            height: 80vh;
-            padding: 20px;
+            width: 98%;
+            max-width: 1200px;
+            height: 90vh;
+            padding: 10px;
+            margin: 2% auto;
         }
         
         .game-iframe {
             width: 100%;
-            height: calc(100% - 60px);
+            height: calc(100% - 40px);
             border: 3px solid #333;
             border-radius: 10px;
+            transform: scale(1.1);
+            transform-origin: center;
+            overflow: hidden;
+        }
+        
+        .game-modal h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            text-align: center;
         }
         
         @keyframes float {
@@ -409,7 +419,36 @@
         
         function openGameModal() {
             document.getElementById('gameModal').style.display = 'block';
-            document.getElementById('gameFrame').src = 'https://gamaverse.com/the-electric-shocktopus-game/';
+            // Try to focus on just the game content by scrolling the iframe
+            const iframe = document.getElementById('gameFrame');
+            iframe.src = 'https://gamaverse.com/the-electric-shocktopus-game/';
+            
+            // Add some CSS to try to hide website headers/footers
+            iframe.onload = function() {
+                try {
+                    // This might not work due to CORS, but worth trying
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    if (iframeDoc) {
+                        // Try to hide common website elements
+                        const style = iframeDoc.createElement('style');
+                        style.textContent = `
+                            header, .header, nav, .nav, footer, .footer, 
+                            .site-header, .site-footer, .navigation,
+                            .ads, .advertisement, .sidebar { display: none !important; }
+                            body { margin: 0 !important; padding: 0 !important; }
+                            .game-container, .game-wrapper, #game { 
+                                width: 100% !important; 
+                                height: 100vh !important; 
+                                margin: 0 !important; 
+                            }
+                        `;
+                        iframeDoc.head.appendChild(style);
+                    }
+                } catch (e) {
+                    // CORS will likely prevent this, but that's okay
+                    console.log('Cannot modify iframe content due to CORS policy');
+                }
+            };
         }
         
         function closeGameModal() {
