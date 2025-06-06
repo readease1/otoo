@@ -272,25 +272,29 @@
         
         .game-modal .modal-content {
             width: 98%;
-            max-width: 1200px;
-            height: 90vh;
-            padding: 5px;
-            margin: 2% auto;
+            max-width: 1300px;
+            height: 95vh;
+            padding: 15px;
+            margin: 1% auto;
+            overflow: hidden;
         }
         
         .game-iframe {
-            width: 100%;
-            height: calc(100% - 30px);
+            width: 120%;
+            height: calc(120% - 30px);
             border: 3px solid #333;
             border-radius: 10px;
-            margin-top: -50px;
-            overflow: hidden;
+            margin-top: -70px;
+            margin-left: -10%;
+            transform: translateY(-50px);
         }
         
         .game-modal h2 {
             font-size: 18px;
             margin-bottom: 5px;
             text-align: center;
+            position: relative;
+            z-index: 10;
         }
         
         @keyframes float {
